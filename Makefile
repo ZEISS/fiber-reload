@@ -6,9 +6,6 @@ GO_TEST 		?= $(GO_RUN_TOOLS) gotest.tools/gotestsum --format pkgname
 GO_RELEASER 	?= $(GO_RUN_TOOLS) github.com/goreleaser/goreleaser
 GO_MOD 			?= $(shell ${GO} list -m)
 
-# Module name
-MODULE_NAME ?= github.com/katallaxie/template-go
-
 .PHONY: build
 build: ## Build the binary file.
 	$(GO_RELEASER) build --snapshot --clean

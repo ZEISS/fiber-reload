@@ -1,3 +1,3 @@
-package example
+package reload
 
 //go:generate echo "Generating ..."
