@@ -20,7 +20,20 @@ type contextKey int
 
 // The keys for the values in context
 const (
-	devContext contextKey = iota
+	envCtx contextKey = iota
+)
+
+const (
+	// Noop is a no-op function.
+	Noop = "noop"
+	// Environment environment
+	Development = "development"
+	// Testing environment
+	Testing = "testing"
+	// Staging environment
+	Staging = "staging"
+	// Production environment
+	Production = "production"
 )
 
 var id = conv.Bytes(uuid.New().String())
@@ -91,10 +104,10 @@ func configDefault(config ...Config) Config {
 	return cfg
 }
 
-// SetDevelopmentHandler sets the environment handler.
-func SetDevelopmentHandler(development bool) fiber.Handler {
+// Environment is a middleware that sets the environment context.
+func Environment(env string) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		err := SetDevelopmentContext(c, development)
+		err := SetEnvironmentContext(c, env)
 		if err != nil {
 			return err
 		}
@@ -103,27 +116,67 @@ func SetDevelopmentHandler(development bool) fiber.Handler {
 	}
 }
 
-// SetDevelopmentContext sets the environment context.
-func SetDevelopmentContext(c *fiber.Ctx, isDevelopment bool) error {
+// SetEnvironmentContext sets the environment context.
+func SetEnvironmentContext(c *fiber.Ctx, env string) error {
 	userCtx := c.UserContext()
 
-	envCtx := context.WithValue(userCtx, devContext, isDevelopment)
+	envCtx := context.WithValue(userCtx, envCtx, env)
 	c.SetUserContext(envCtx)
 
 	return nil
 }
 
-// GetDevelopmentContext gets the environment context.
-func GetDevelopmentContext(ctx context.Context) (bool, error) {
-	userCtx := ctx.Value(devContext)
+// GetEnvironmentContext gets the environment context.
+func GetEnvironmentContext(ctx context.Context) (string, error) {
+	userCtx := ctx.Value(envCtx)
 	if userCtx == nil {
-		return false, nil
+		return Noop, nil
 	}
 
-	isDevelopment, ok := userCtx.(bool)
+	env, ok := userCtx.(string)
 	if !ok {
-		return false, nil
+		return Noop, nil
 	}
 
-	return isDevelopment, nil
+	return env, nil
+}
+
+// IsDevelopment returns true if the environment is development.
+func IsDevelopment(ctx context.Context) bool {
+	env, err := GetEnvironmentContext(ctx)
+	if err != nil {
+		return false
+	}
+
+	return env == Development
+}
+
+// IsTesting returns true if the environment is testing.
+func IsTesting(ctx context.Context) bool {
+	env, err := GetEnvironmentContext(ctx)
+	if err != nil {
+		return false
+	}
+
+	return env == Testing
+}
+
+// IsStaging returns true if the environment is staging.
+func IsStaging(ctx context.Context) bool {
+	env, err := GetEnvironmentContext(ctx)
+	if err != nil {
+		return false
+	}
+
+	return env == Staging
+}
+
+// IsProduction returns true if the environment is production.
+func IsProduction(ctx context.Context) bool {
+	env, err := GetEnvironmentContext(ctx)
+	if err != nil {
+		return false
+	}
+
+	return env == Production
 }
