@@ -91,6 +91,18 @@ func configDefault(config ...Config) Config {
 	return cfg
 }
 
+// SetDevelopmentHandler sets the environment handler.
+func SetDevelopmentHandler(development bool) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		err := SetDevelopmentContext(c, development)
+		if err != nil {
+			return err
+		}
+
+		return c.Next()
+	}
+}
+
 // SetDevelopmentContext sets the environment context.
 func SetDevelopmentContext(c *fiber.Ctx, isDevelopment bool) error {
 	userCtx := c.UserContext()
