@@ -6,6 +6,10 @@ GO_TEST 		?= $(GO_RUN_TOOLS) gotest.tools/gotestsum --format pkgname
 GO_RELEASER 	?= $(GO_RUN_TOOLS) github.com/goreleaser/goreleaser
 GO_MOD 			?= $(shell ${GO} list -m)
 
+.PHONY: release
+release: ## Release the project.
+	$(GO_RELEASER) release --clean
+
 .PHONY: build
 build: ## Build the binary file.
 	$(GO_RELEASER) build --snapshot --clean
