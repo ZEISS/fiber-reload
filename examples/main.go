@@ -24,12 +24,6 @@ type Flags struct {
 	Addr string
 }
 
-// DemoRow ...
-type DemoRow struct {
-	ID   int
-	Name string
-}
-
 var cfg = &Config{
 	Flags: &Flags{},
 }

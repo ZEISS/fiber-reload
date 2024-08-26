@@ -4,6 +4,7 @@
 package reload
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/gofiber/contrib/websocket"
@@ -11,6 +12,15 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	"github.com/google/uuid"
 	"github.com/zeiss/pkg/conv"
+)
+
+// The contextKey type is unexported to prevent collisions with context keys defined in
+// other packages.
+type contextKey int
+
+// The keys for the values in context
+const (
+	devContext contextKey = iota
 )
 
 var id = conv.Bytes(uuid.New().String())
@@ -79,4 +89,29 @@ func configDefault(config ...Config) Config {
 	cfg := config[0]
 
 	return cfg
+}
+
+// SetDevelopmentContext sets the environment context.
+func SetDevelopmentContext(c *fiber.Ctx, isDevelopment bool) error {
+	userCtx := c.UserContext()
+
+	envCtx := context.WithValue(userCtx, devContext, isDevelopment)
+	c.SetUserContext(envCtx)
+
+	return nil
+}
+
+// GetDevelopmentContext gets the environment context.
+func GetDevelopmentContext(ctx context.Context) (bool, error) {
+	userCtx := ctx.Value(devContext)
+	if userCtx == nil {
+		return false, nil
+	}
+
+	isDevelopment, ok := userCtx.(bool)
+	if !ok {
+		return false, nil
+	}
+
+	return isDevelopment, nil
 }
