@@ -8,6 +8,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/golangci/golangci-lint v1.60.3
 	github.com/google/uuid v1.6.0
+	github.com/spf13/cobra v1.8.1
 	github.com/zeiss/pkg v0.1.8-0.20240823051228-d40ebe6703e0
 	mvdan.cc/gofumpt v0.7.0
 )
@@ -154,7 +155,6 @@ require (
 	github.com/sourcegraph/go-diff v0.7.0 // indirect
 	github.com/spf13/afero v1.11.0 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
-	github.com/spf13/cobra v1.8.1 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/spf13/viper v1.12.0 // indirect

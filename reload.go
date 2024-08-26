@@ -4,8 +4,11 @@
 package reload
 
 import (
+	"net/http"
+
 	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	"github.com/google/uuid"
 	"github.com/zeiss/pkg/conv"
 )
@@ -31,8 +34,26 @@ var ConfigDefault = Config{
 	IdGenerator: DefaultIdGenerator,
 }
 
+// WithHotReload is a middleware that enables a live reload of a site.
+func WithHotReload(app *fiber.App, config ...Config) *fiber.App {
+	app.Use("/ws", func(c *fiber.Ctx) error {
+		if websocket.IsWebSocketUpgrade(c) {
+			return c.Next()
+		}
+		return fiber.ErrUpgradeRequired
+	})
+
+	app.Use("/static", filesystem.New(filesystem.Config{
+		Root: http.FS(FS),
+	}))
+
+	app.Get("/ws/reload", Reload(config...))
+
+	return app
+}
+
 // Reload is a middleware that enables a live reload of a site.
-func Reload(handler fiber.Handler, config ...Config) fiber.Handler {
+func Reload(config ...Config) fiber.Handler {
 	cfg := configDefault(config...)
 
 	return websocket.New(func(c *websocket.Conn) {

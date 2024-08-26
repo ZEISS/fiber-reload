@@ -1,3 +1,3 @@
 package reload
 
-//go:generate echo "Generating ..."
+//go:generate ./node_modules/.bin/esbuild reload.ts --bundle --outfile=reload.js
