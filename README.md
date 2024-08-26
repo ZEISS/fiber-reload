@@ -6,12 +6,12 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Taylor Swift](https://img.shields.io/badge/secured%20by-taylor%20swift-brightgreen.svg)](https://twitter.com/SwiftOnSecurity)
 
-This is an experimental feature. It will reload the current page and all its dependencies.
+This is an experimental middleware for [Fiber](https://gofiber.io/) ⚡️. It will reload the current page and all its dependencies.
 
 ## Installation
 
 ```bash
-$ go get github.com/zeiss/fiber-authz
+$ go get github.com/zeiss/fiber-reload
 ```
 
 ## Examples
