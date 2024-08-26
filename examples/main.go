@@ -54,7 +54,7 @@ func (w *webSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		app.Use(logger.New())
 		app.Use(recover.New())
 
-		app = reload.WithHotReload(app)
+		reload.WithHotReload(app)
 		app.Static("/", ".")
 
 		err := app.Listen(cfg.Flags.Addr)

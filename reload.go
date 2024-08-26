@@ -35,7 +35,7 @@ var ConfigDefault = Config{
 }
 
 // WithHotReload is a middleware that enables a live reload of a site.
-func WithHotReload(app *fiber.App, config ...Config) *fiber.App {
+func WithHotReload(app *fiber.App, config ...Config) {
 	app.Use("/ws", func(c *fiber.Ctx) error {
 		if websocket.IsWebSocketUpgrade(c) {
 			return c.Next()
@@ -48,8 +48,6 @@ func WithHotReload(app *fiber.App, config ...Config) *fiber.App {
 	}))
 
 	app.Get("/ws/reload", Reload(config...))
-
-	return app
 }
 
 // Reload is a middleware that enables a live reload of a site.
