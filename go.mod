@@ -8,7 +8,7 @@ require (
 	github.com/golangci/golangci-lint v1.64.5
 	github.com/google/uuid v1.6.0
 	github.com/spf13/cobra v1.9.1
-	github.com/zeiss/pkg v0.1.21
+	github.com/zeiss/pkg v0.1.22
 	mvdan.cc/gofumpt v0.7.0
 )
 
@@ -196,7 +196,7 @@ require (
 	golang.org/x/sys v0.30.0 // indirect
 	golang.org/x/text v0.22.0 // indirect
 	golang.org/x/tools v0.30.0 // indirect
-	google.golang.org/protobuf v1.36.4 // indirect
+	google.golang.org/protobuf v1.36.5 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
