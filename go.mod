@@ -4,7 +4,7 @@ go 1.23
 toolchain go1.24.1
 
 require (
-	github.com/gofiber/contrib/websocket v1.3.3
+	github.com/gofiber/contrib/websocket v1.3.4
 	github.com/gofiber/fiber/v2 v2.52.6
 	github.com/golang/mock v1.6.0
 	github.com/golangci/golangci-lint v1.64.8
