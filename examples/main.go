@@ -5,13 +5,14 @@ import (
 	"log"
 	"os"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/gofiber/fiber/v2/middleware/recover"
-	"github.com/gofiber/fiber/v2/middleware/requestid"
+	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/logger"
+	"github.com/gofiber/fiber/v3/middleware/recover"
+	"github.com/gofiber/fiber/v3/middleware/requestid"
+	"github.com/gofiber/fiber/v3/middleware/static"
+	"github.com/katallaxie/pkg/server"
 	"github.com/spf13/cobra"
-	reload "github.com/zeiss/fiber-reload"
-	"github.com/zeiss/pkg/server"
+	reload "github.com/zeiss/fiber-reload/v3"
 )
 
 // Config ...
@@ -34,14 +35,14 @@ func init() {
 }
 
 var rootCmd = &cobra.Command{
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(cmd *cobra.Command, _ []string) error {
 		return run(cmd.Context())
 	},
 }
 
 type webSrv struct{}
 
-func (w *webSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.RunFunc) func() error {
+func (w *webSrv) Start(_ context.Context, _ server.ReadyFunc, _ server.RunFunc) func() error {
 	return func() error {
 		app := fiber.New()
 		app.Use(requestid.New())
@@ -49,11 +50,11 @@ func (w *webSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		app.Use(recover.New())
 
 		reload.WithHotReload(app)
-		app.Static("/", ".")
+		app.Use(("/"), static.New("."))
 
 		err := app.Listen(cfg.Flags.Addr)
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
 
 		return nil

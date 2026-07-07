@@ -5,20 +5,20 @@ package reload
 
 import (
 	"context"
-	"net/http"
 
 	"github.com/gofiber/contrib/websocket"
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/filesystem"
+	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/static"
 	"github.com/google/uuid"
-	"github.com/zeiss/pkg/conv"
+	"github.com/katallaxie/pkg/conv"
+	"github.com/katallaxie/pkg/utilx"
 )
 
 // The contextKey type is unexported to prevent collisions with context keys defined in
 // other packages.
 type contextKey int
 
-// The keys for the values in context
+// The keys for the values in context.
 const (
 	envCtx contextKey = iota
 )
@@ -26,27 +26,27 @@ const (
 const (
 	// Noop is a no-op function.
 	Noop = "noop"
-	// Environment environment
+	// Environment environment.
 	Development = "development"
-	// Testing environment
+	// Testing environment.
 	Testing = "testing"
-	// Staging environment
+	// Staging environment.
 	Staging = "staging"
-	// Production environment
+	// Production environment.
 	Production = "production"
 )
 
 var id = conv.Bytes(uuid.New().String())
 
-// DefaultIdGenerator generates a new UUID.
-func DefaultIdGenerator() []byte {
+// DefaultIDGenerator generates a new UUID.
+func DefaultIDGenerator() []byte {
 	return id
 }
 
 // Config ...
 type Config struct {
-	// IdGenerator
-	IdGenerator func() []byte
+	// IDGenerator
+	IDGenerator func() []byte
 
 	// Next defines a function to skip this middleware when returned true.
 	Next func(c *fiber.Ctx) bool
@@ -54,20 +54,22 @@ type Config struct {
 
 // ConfigDefault is the default config.
 var ConfigDefault = Config{
-	IdGenerator: DefaultIdGenerator,
+	IDGenerator: DefaultIDGenerator,
 }
 
 // WithHotReload is a middleware that enables a live reload of a site.
 func WithHotReload(app *fiber.App, config ...Config) {
-	app.Use("/ws", func(c *fiber.Ctx) error {
+	app.Use("/ws", func(c fiber.Ctx) error {
 		if websocket.IsWebSocketUpgrade(c) {
 			return c.Next()
 		}
+
 		return fiber.ErrUpgradeRequired
 	})
 
-	app.Use("/static", filesystem.New(filesystem.Config{
-		Root: http.FS(FS),
+	app.Use("/static", static.New("", static.Config{
+		FS:     FS,
+		Browse: true,
 	}))
 
 	app.Get("/ws/reload", Reload(config...))
@@ -80,19 +82,19 @@ func Reload(config ...Config) fiber.Handler {
 	return websocket.New(func(c *websocket.Conn) {
 		for {
 			_, _, err := c.ReadMessage()
-			if err != nil {
+			if utilx.NotEmpty(err) {
 				break
 			}
 
-			err = c.WriteMessage(websocket.TextMessage, cfg.IdGenerator())
-			if err != nil {
+			err = c.WriteMessage(websocket.TextMessage, cfg.IDGenerator())
+			if utilx.NotEmpty(err) {
 				break
 			}
 		}
 	})
 }
 
-// Helper function to set default values
+// Helper function to set default values.
 func configDefault(config ...Config) Config {
 	if len(config) < 1 {
 		return ConfigDefault
@@ -106,7 +108,7 @@ func configDefault(config ...Config) Config {
 
 // Environment is a middleware that sets the environment context.
 func Environment(env string) fiber.Handler {
-	return func(c *fiber.Ctx) error {
+	return func(c fiber.Ctx) error {
 		err := SetEnvironmentContext(c, env)
 		if err != nil {
 			return err
@@ -117,11 +119,9 @@ func Environment(env string) fiber.Handler {
 }
 
 // SetEnvironmentContext sets the environment context.
-func SetEnvironmentContext(c *fiber.Ctx, env string) error {
-	userCtx := c.UserContext()
-
-	envCtx := context.WithValue(userCtx, envCtx, env)
-	c.SetUserContext(envCtx)
+func SetEnvironmentContext(c fiber.Ctx, env string) error {
+	envCtx := context.WithValue(c, envCtx, env)
+	c.SetContext(envCtx)
 
 	return nil
 }
