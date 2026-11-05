@@ -6,12 +6,13 @@ package reload
 import (
 	"context"
 
+	"github.com/katallaxie/pkg/conv"
+	"github.com/katallaxie/pkg/utilx"
+
 	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/static"
 	"github.com/google/uuid"
-	"github.com/katallaxie/pkg/conv"
-	"github.com/katallaxie/pkg/utilx"
 )
 
 // The contextKey type is unexported to prevent collisions with context keys defined in
@@ -36,20 +37,20 @@ const (
 	Production = "production"
 )
 
-var id = conv.Bytes(uuid.New().String())
+// IDGenerator is a function that generates a new ID.
+type IDGenerator func() []byte
 
 // DefaultIDGenerator generates a new UUID.
 func DefaultIDGenerator() []byte {
-	return id
+	return conv.Bytes(uuid.New().String())
 }
 
 // Config ...
 type Config struct {
 	// IDGenerator
-	IDGenerator func() []byte
-
+	IDGenerator IDGenerator
 	// Next defines a function to skip this middleware when returned true.
-	Next func(c *fiber.Ctx) bool
+	Next func(c fiber.Ctx) bool
 }
 
 // ConfigDefault is the default config.
@@ -92,18 +93,6 @@ func Reload(config ...Config) fiber.Handler {
 			}
 		}
 	})
-}
-
-// Helper function to set default values.
-func configDefault(config ...Config) Config {
-	if len(config) < 1 {
-		return ConfigDefault
-	}
-
-	// Override default config
-	cfg := config[0]
-
-	return cfg
 }
 
 // Environment is a middleware that sets the environment context.
@@ -179,4 +168,16 @@ func IsProduction(ctx context.Context) bool {
 	}
 
 	return env == Production
+}
+
+// Helper function to set default values.
+func configDefault(config ...Config) Config {
+	if len(config) < 1 {
+		return ConfigDefault
+	}
+
+	// Override default config
+	cfg := config[0]
+
+	return cfg
 }

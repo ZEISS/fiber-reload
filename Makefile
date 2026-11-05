@@ -1,10 +1,10 @@
 .DEFAULT_GOAL := build
 
 # Go variables
-GO 					?= go
+GO 						?= go
 GO_TOOL 			?= $(GO) tool
 GO_TEST 			?= $(GO_TOOL) gotest.tools/gotestsum --format pkgname
-GO_RELEASER 		?= $(GO_TOOL) github.com/goreleaser/goreleaser
+GO_RELEASER 	?= $(GO_TOOL) github.com/goreleaser/goreleaser
 GO_AIR 				?= air
 
 .PHONY: start
