@@ -7,7 +7,7 @@ import (
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/logger"
-	"github.com/gofiber/fiber/v3/middleware/recover"
+	fiber_recover "github.com/gofiber/fiber/v3/middleware/recover"
 	"github.com/gofiber/fiber/v3/middleware/requestid"
 	"github.com/gofiber/fiber/v3/middleware/static"
 	"github.com/katallaxie/pkg/server"
@@ -47,10 +47,10 @@ func (w *webSrv) Start(_ context.Context, _ server.ReadyFunc, _ server.RunFunc) 
 		app := fiber.New()
 		app.Use(requestid.New())
 		app.Use(logger.New())
-		app.Use(recover.New())
+		app.Use(fiber_recover.New())
 
 		reload.WithHotReload(app)
-		app.Use(("/"), static.New("."))
+		app.Use("/", static.New("."))
 
 		err := app.Listen(cfg.Flags.Addr)
 		if err != nil {

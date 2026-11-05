@@ -9,7 +9,7 @@ import (
 	"github.com/katallaxie/pkg/conv"
 	"github.com/katallaxie/pkg/utilx"
 
-	"github.com/gofiber/contrib/websocket"
+	"github.com/gofiber/contrib/v3/websocket"
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/static"
 	"github.com/google/uuid"
