@@ -11,7 +11,7 @@ tool (
 )
 
 require (
-	github.com/gofiber/contrib/v3/websocket v1.2.12
+	github.com/gofiber/contrib/v3/websocket v1.2.13
 	github.com/gofiber/fiber/v3 v3.6.1
 	github.com/google/uuid v1.6.0
 	github.com/katallaxie/pkg v0.7.11
